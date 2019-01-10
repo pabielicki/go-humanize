@@ -29,6 +29,16 @@ func Time(then time.Time) string {
 	)
 }
 
+func LocalTime(then time.Time, l string) string{
+	return LocalRelTime(
+		then,
+		time.Now(),
+		GetLocalRuleset(l).Inds.Before.Word,
+		GetLocalRuleset(l).Inds.Later.Word,
+		l,
+	)
+}
+
 // A RelTimeMagnitude struct contains a relative time point at which
 // the relative format of time will switch to a new format string.  A
 // slice of these in ascending order by their "D" field is passed to
@@ -75,6 +85,28 @@ func UpdateMagnitudes() {
 	}
 }
 
+func dynamicMagnitudes(l string) []RelTimeMagnitude {
+	return []RelTimeMagnitude{
+		{time.Second, GetLocalRuleset(l).Mags.Now, time.Second},
+		{2 * time.Second, GetLocalRuleset(l).Mags.Second + " %s", 1},
+		{time.Minute, GetLocalRuleset(l).Mags.Seconds + " %s", time.Second},
+		{2 * time.Minute, GetLocalRuleset(l).Mags.Minute + " %s", 1},
+		{time.Hour, GetLocalRuleset(l).Mags.Minutes + " %s", time.Minute},
+		{2 * time.Hour, GetLocalRuleset(l).Mags.Hour + " %s", 1},
+		{Day, GetLocalRuleset(l).Mags.Hours + " %s", time.Hour},
+		{2 * Day, GetLocalRuleset(l).Mags.Day + " %s", 1},
+		{Week, GetLocalRuleset(l).Mags.Days + " %s", Day},
+		{2 * Week, GetLocalRuleset(l).Mags.Week + " %s", 1},
+		{Month, GetLocalRuleset(l).Mags.Weeks + " %s", Week},
+		{2 * Month, GetLocalRuleset(l).Mags.Month + " %s", 1},
+		{Year, GetLocalRuleset(l).Mags.Months + " %s", Month},
+		{18 * Month, GetLocalRuleset(l).Mags.Year + " %s", 1},
+		{2 * Year, "2" + GetLocalRuleset(l).Mags.Years[2:] + " %s", 1},
+		{LongTime, GetLocalRuleset(l).Mags.Years + " %s", Year},
+		{math.MaxInt64, GetLocalRuleset(l).Mags.Longtime + " %s", 1},
+	}
+}
+
 // RelTime formats a time into a relative string.
 //
 // It takes two times and two labels.  In addition to the generic time
@@ -86,6 +118,9 @@ func RelTime(a, b time.Time, albl, blbl string) string {
 	return CustomRelTime(a, b, albl, blbl, defaultMagnitudes)
 }
 
+func LocalRelTime(a, b time.Time, albl, blbl string, l string) string {
+	return CustomRelTime(a, b, albl, blbl, dynamicMagnitudes(l))
+}
 // CustomRelTime formats a time into a relative string.
 //
 // It takes two times two labels and a table of relative time formats.

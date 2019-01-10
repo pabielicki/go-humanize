@@ -56,6 +56,7 @@ const (
 
 var active = Uninitialized
 var ruleset = Ruleset{}
+var rulesets = map[string]Ruleset{}
 
 // ValidateLanguage for output
 // Must be called before Time or Ordinal function
@@ -77,11 +78,19 @@ func GetRuleset() Ruleset {
 	return ruleset
 }
 
+func GetLocalRuleset(l string) Ruleset {
+	return rulesets[l]
+}
+
 // SetLanguage of the humanizing option.
 func SetLanguage(l Local) {
 	active = l
 	parseRuleset(l)
 	UpdateMagnitudes()
+}
+
+func LoadLanguages(l ...Local) {
+	parseRulesets(l)
 }
 
 func parseRuleset(l Local) {
@@ -96,4 +105,25 @@ func parseRuleset(l Local) {
 	} else {
 		fmt.Println("Error ! Can not read file.")
 	}
+}
+
+func parseRulesets(l []Local) {
+	rsts := make(map[string]Ruleset)
+	for _, local := range l {
+		fmt.Println("Reading", "locals/"+string(local)+".json")
+		f, err := ioutil.ReadFile("locals/" + string(local) + ".json")
+		if err == nil {
+			r := Ruleset{}
+			err := json.Unmarshal(f, &r)
+			if err == nil {
+				rsts[string(local)] = r 
+			} else {
+				fmt.Println(err)
+			}
+		} else {
+			fmt.Println("Error ! Can not read file.")
+			fmt.Println(err)
+		}
+	}
+
 }

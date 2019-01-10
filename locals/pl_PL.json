@@ -1,0 +1,40 @@
+{
+	"magnitudes": {
+		"now": "przed chwilą",
+		"second": "1 sekunda",
+		"seconds": "%d sekund",
+		"minute": "1 minuta",
+		"minutes": "%d minut",
+		"hour": "1 godzina",
+		"hours": "%d godzin",
+		"day": "1 dzień",
+		"days": "%d dni",
+		"week": "1 tydzień",
+		"weeks": "%d tygodnie",
+		"month": "1 miesiąc",
+		"months": "%d miesięcy",
+		"year": "1 rok",
+		"years": "%d lat",
+		"longtime": "dawno"
+	},
+
+	"indicators": {
+		"before": {
+			"word": "temu",
+			"fix": "suffix"
+		},
+
+		"later": {
+			"word": "od teraz",
+			"fix": "suffix"
+		}
+	},
+
+	"ordinals": [
+		["%.", "-ty"],
+		["%10 1", "-szy"],
+		["%10 2", "-gi"],
+		["%10 3", "-ci"],
+		["%100 11 %100 12 %100 13", "-ty"]
+	]
+}

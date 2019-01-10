@@ -125,5 +125,6 @@ func parseRulesets(l []Local) {
 			fmt.Println(err)
 		}
 	}
+	rulesets = rsts
 
 }

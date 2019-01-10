@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"regexp"
+	"strings"
 )
 
 // Local type for the ordinals and times.
@@ -107,16 +109,35 @@ func parseRuleset(l Local) {
 	}
 }
 
+func loadFile(path string) ([]byte, error) {
+	match, _ := regexp.MatchString("^[a-z]{2}_[A-Z]{2}$", path)
+	if match {
+		fmt.Println("Reading", "locals/"+string(path)+".json")
+		return ioutil.ReadFile("locals/" + string(path) + ".json")
+	}
+	fmt.Println("Reading", path)
+	return ioutil.ReadFile(path)
+}
+
+func parseLocalePath(path string) string {
+	match, _ := regexp.MatchString("^[a-z]{2}_[A-Z]{2}$", path)
+	if match {
+		return path
+	}
+	s := strings.Split(path, "/")
+	tag := strings.Split(s[len(s)-1], ".")
+	return tag[0]
+}
+
 func parseRulesets(l []Local) {
 	rsts := make(map[string]Ruleset)
 	for _, local := range l {
-		fmt.Println("Reading", "locals/"+string(local)+".json")
-		f, err := ioutil.ReadFile("locals/" + string(local) + ".json")
+		f, err := loadFile(string(local))
 		if err == nil {
 			r := Ruleset{}
 			err := json.Unmarshal(f, &r)
 			if err == nil {
-				rsts[string(local)] = r 
+				rsts[parseLocalePath(string(local))] = r 
 			} else {
 				fmt.Println(err)
 			}

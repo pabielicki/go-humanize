@@ -15,7 +15,7 @@ import (
 
 
 func TestLocal(t *testing.T) {
-	LoadLanguages("pl_PL", "en_US")
+	LoadLanguages("pl_PL", "locals/en_US.json")
 	now := time.Now()
 	l := "pl_PL"
 	testList{

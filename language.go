@@ -91,8 +91,9 @@ func SetLanguage(l Local) {
 	UpdateMagnitudes()
 }
 
-func LoadLanguages(l ...Local) {
-	parseRulesets(l)
+func LoadLanguages(l ...Local) error {
+	err := parseRulesets(l)
+	return err
 }
 
 func parseRuleset(l Local) {
@@ -129,7 +130,7 @@ func parseLocalePath(path string) string {
 	return tag[0]
 }
 
-func parseRulesets(l []Local) {
+func parseRulesets(l []Local) error {
 	rsts := make(map[string]Ruleset)
 	for _, local := range l {
 		f, err := loadFile(string(local))
@@ -139,13 +140,13 @@ func parseRulesets(l []Local) {
 			if err == nil {
 				rsts[parseLocalePath(string(local))] = r 
 			} else {
-				fmt.Println(err)
+				return err
 			}
 		} else {
-			fmt.Println("Error ! Can not read file.")
-			fmt.Println(err)
+			return err
 		}
 	}
 	rulesets = rsts
+	return nil
 
 }
